@@ -3,7 +3,6 @@ PATH
   specs:
     neo4j-rake_tasks (0.0.7)
       colored
-      httparty
       os
       rake
       zip
@@ -170,3 +169,6 @@ DEPENDENCIES
   rubocop
   simplecov
   simplecov-html
+
+BUNDLED WITH
+   1.10.2

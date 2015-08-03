@@ -37,7 +37,6 @@ DESCRIPTION
     '--inline-source']
 
   s.add_dependency('colored')
-  s.add_dependency('httparty')
   s.add_dependency('rake')
   s.add_dependency('os')
   s.add_dependency('zip')

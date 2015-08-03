@@ -1,5 +1,6 @@
 require 'pathname'
-require 'httparty'
+require 'open-uri'
+require 'json'
 
 module Neo4j
   module RakeTasks
@@ -146,7 +147,6 @@ module Neo4j
       NEO4J_LATEST_URL = 'https://api.github.com/repos/neo4j/neo4j/releases/latest'
       def version_from_edition(edition_string)
         edition_string.gsub(/-latest$/) do
-          require 'open-uri'
           puts 'Retrieving latest version...'
           latest_version = JSON.parse(open(NEO4J_LATEST_URL).read)['tag_name']
           puts "Latest version is: #{latest_version}"
@@ -160,16 +160,18 @@ module Neo4j
         tempfile = Tempfile.open('neo4j-download', encoding: 'ASCII-8BIT')
 
         url = download_url(version)
+        uri = URI.parse(url)
 
-        status = HTTParty.head(url).code
-        unless (200...300).include?(status)
-          fail "#{version} is not available to download"
+        open(url) do |f|
+          unless (200...300).cover?(f.status.first.to_i)
+            fail "#{version} is not available to download"
+          end
+          tempfile << f.read
+          tempfile.flush
         end
 
-        tempfile << HTTParty.get(url)
-        tempfile.flush
-
-        tempfile.path
+        p tempfile.path
+        p
       end
 
       # POSTs to an endpoint with the form required to change a Neo4j password
